@@ -79,6 +79,13 @@ resource "azurerm_linux_virtual_machine" "vm" {
   tags                         = merge(local.tags, try(each.value.tags, null))
   zone                         = try(each.value.zone, null)
 
+  dynamic "additional_capabilities" {
+    for_each = try(each.value.additional_capabilities, null) != null ? [1] : []
+    content {
+      ultra_ssd_enabled = try(each.value.additional_capabilities.ultra_ssd_enabled, false)
+    }
+  }
+
   custom_data = try(
     local.dynamic_custom_data[each.value.custom_data][each.value.name],
     try(filebase64(format("%s/%s", path.cwd, each.value.custom_data)), base64encode(each.value.custom_data)),
