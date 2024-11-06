@@ -48,7 +48,7 @@ resource "time_sleep" "azurerm_role_assignment_for" {
   ) > 0 ? 1 : 0
 
   # 2 mins timer on creation
-  create_duration = "3m"
+  create_duration = "2m"
 }
 
 resource "time_sleep" "azurerm_role_assignment_for_deferred" {
