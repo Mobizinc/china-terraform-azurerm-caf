@@ -20,17 +20,19 @@ resource "azurecaf_name" "disk" {
 resource "azurerm_managed_disk" "disk" {
   for_each = lookup(var.settings, "data_disks", {})
 
-  name                   = azurecaf_name.disk[each.key].result
-  location               = local.location
-  resource_group_name    = local.resource_group_name
-  storage_account_type   = each.value.storage_account_type
-  create_option          = each.value.create_option
-  disk_size_gb           = each.value.disk_size_gb
-  zones                  = try(each.value.zones, null)
-  disk_iops_read_write   = try(each.value.disk_iops_read_write, null)
-  disk_mbps_read_write   = try(each.value.disk.disk_mbps_read_write, null)
-  tags                   = merge(local.tags, try(each.value.tags, {}))
-  disk_encryption_set_id = try(each.value.disk_encryption_set_key, null) == null ? null : var.disk_encryption_sets[try(each.value.lz_key, var.client_config.landingzone_key)][each.value.disk_encryption_set_key].id
+  name                          = azurecaf_name.disk[each.key].result
+  location                      = local.location
+  resource_group_name           = local.resource_group_name
+  storage_account_type          = each.value.storage_account_type
+  create_option                 = each.value.create_option
+  disk_size_gb                  = each.value.disk_size_gb
+  zones                         = try(each.value.zones, null)
+  network_access_policy         = try(each.value.network_access_policy, null)
+  public_network_access_enabled = try(each.value.public_network_access_enabled, true)
+  disk_iops_read_write          = try(each.value.disk_iops_read_write, null)
+  disk_mbps_read_write          = try(each.value.disk.disk_mbps_read_write, null)
+  tags                          = merge(local.tags, try(each.value.tags, {}))
+  disk_encryption_set_id        = try(each.value.disk_encryption_set_key, null) == null ? null : var.disk_encryption_sets[try(each.value.lz_key, var.client_config.landingzone_key)][each.value.disk_encryption_set_key].id
 
   lifecycle {
     ignore_changes = [
